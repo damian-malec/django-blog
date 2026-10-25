@@ -25,7 +25,7 @@ SECRET_KEY = '(-low&3(84mqjvh+u6#@9ef!d)6p@0j$13e567@m!)b@=3qbgt'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1', '.pythonanywhere.com']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 
 
 # Application definition
@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'blog',
+    'shop',
 ]
 
 MIDDLEWARE = [
@@ -120,3 +121,7 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+
+CSRF_TRUSTED_ORIGINS = [
+    'https://localhost:8000',
+]
