@@ -1,27 +1,126 @@
-<!DOCTYPE html>
-<html lang="pl">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Twój koszyk</title>
-</head>
-<body>
-    <h1>Twój koszyk</h1>
+{% extends 'shop/base.html' %}
 
-    {% for item in items %}
-        <div>
-            <h2>{{ item.product.name }}</h2>
-            <p>Ilość: {{ item.quantity }}</p>
-            <p>Cena: {{ item.product.price }} zł</p>
-            <p>Wartość: {{ item.subtotal }} zł</p>
+{% block title %}your cart | ANADIG{% endblock %}
+
+{% block content %}
+<div class="mb-5">
+    <p class="text-secondary text-uppercase small fw-semibold mb-2">
+        your selection
+    </p>
+    <h1 class="page-heading display-4 mb-2">your cart</h1>
+    <p class="text-secondary">review your items before checkout</p>
+</div>
+
+{% if items %}
+<div class="row g-4">
+    <div class="col-lg-8">
+        {% for item in items %}
+        <div class="card border-0 shadow-sm rounded-4 mb-3">
+            <div class="card-body p-4">
+                <div class="row align-items-center g-3">
+                    <div class="col">
+                        <h2 class="h5 fw-semibold mb-2">
+                            {{ item.product.name }}
+                        </h2>
+                        <p class="text-secondary small mb-2">
+                            {{ item.product.price }} zł per item
+                        </p>
+                        <p class="fw-semibold mb-0">
+                            subtotal: {{ item.subtotal|floatformat:2 }} zł
+                        </p>
+                    </div>
+
+                    <div class="col-auto">
+                        <form method="post"
+                              action="{% url 'update_cart' item.product.id %}"
+                              class="d-flex align-items-center gap-2">
+                            {% csrf_token %}
+
+                            <button class="btn btn-outline-secondary"
+                                    type="submit"
+                                    name="quantity"
+                                    value="{{ item.quantity|add:'-1' }}"
+                                    aria-label="Decrease quantity"
+                                    {% if item.quantity <= 1 %}disabled{% endif %}>
+                                −
+                            </button>
+
+                            <span class="fw-semibold px-1">
+                                {{ item.quantity }}
+                            </span>
+
+                            <button class="btn btn-outline-secondary"
+                                    type="submit"
+                                    name="quantity"
+                                    value="{{ item.quantity|add:'1' }}"
+                                    aria-label="Increase quantity"
+                                    {% if item.quantity >= 99 %}disabled{% endif %}>
+                                +
+                            </button>
+                        </form>
+
+                        <form method="post"
+                              action="{% url 'remove_from_cart' item.product.id %}"
+                              class="text-end mt-3">
+                            {% csrf_token %}
+                            <button type="submit"
+                                    class="btn btn-link link-danger p-0 text-decoration-none">
+                                remove
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
         </div>
-        <hr>
-    {% empty %}
-        <p>Twój koszyk jest pusty.</p>
-    {% endfor %}
+        {% endfor %}
 
-    <h2>Razem: {{ total }} zł</h2>
+        <a href="{% url 'product_list' %}"
+           class="btn btn-outline-dark mt-2">
+            ← continue shopping
+        </a>
+    </div>
 
-    <p><a href="{% url 'product_list' %}">Wróć do sklepu</a></p>
-</body>
-</html>
+    <div class="col-lg-4">
+        <div class="card border-0 shadow-sm rounded-4">
+            <div class="card-body p-4">
+                <h2 class="h5 fw-bold mb-4">order summary</h2>
+
+                <div class="d-flex justify-content-between mb-3">
+                    <span class="text-secondary">subtotal</span>
+                    <span>{{ total|floatformat:2 }} zł</span>
+                </div>
+
+                <div class="d-flex justify-content-between border-top pt-3 mb-4">
+                    <span class="fw-semibold">total</span>
+                    <span class="fs-4 fw-bold">
+                        {{ total|floatformat:2 }} zł
+                    </span>
+                </div>
+
+                <a href="{% url 'checkout' %}" class="btn btn-dark w-100 py-3">
+                    proceed to checkout
+                </a>
+
+                <p class="small text-secondary text-center mt-3 mb-0">
+                    shipping costs will be calculated later
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% else %}
+<div class="card border-0 shadow-sm rounded-4">
+    <div class="card-body text-center p-5">
+        <div class="display-4 mb-3">🛒</div>
+        <h2 class="h4 fw-bold">your cart is empty...</h2>
+        <p class="text-secondary mb-4">
+            discover something worth having
+        </p>
+        <a href="{% url 'product_list' %}" class="btn btn-dark px-4">
+            explore products
+        </a>
+    </div>
+</div>
+{% endif %}
+{% endblock %}
