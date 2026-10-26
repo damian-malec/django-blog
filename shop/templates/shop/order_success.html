@@ -1,0 +1,22 @@
+{% extends 'shop/base.html' %}
+
+{% block title %}order confirmed | ANADIG{% endblock %}
+
+{% block content %}
+<div class="text-center py-5">
+    <div class="display-3 mb-3">✓</div>
+    <p class="text-secondary text-uppercase small fw-semibold">
+        thank you for choosing ANADIG
+    </p>
+    <h1 class="page-heading display-4 mb-3">order received</h1>
+    <p class="text-secondary mb-2">
+        your order number is <strong>#{{ order.id }}</strong>
+    </p>
+    <p class="text-secondary mb-4">
+        order total: <strong>{{ order.total|floatformat:2 }} zł</strong>
+    </p>
+    <a href="{% url 'product_list' %}" class="btn btn-dark px-4">
+        continue shopping
+    </a>
+</div>
+{% endblock %}
